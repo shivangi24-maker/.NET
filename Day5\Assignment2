@@ -1,0 +1,152 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+using System.Configuration;
+using System.Data;
+using System.Data.SqlClient;
+namespace Assignment_3
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            int Choice = -1;
+            while (true)
+            {
+                Console.WriteLine("Enter your choice");
+                Console.WriteLine("1.Display All");
+                Console.WriteLine("2.Add Employee");
+                Console.WriteLine("3.Update Details");
+                Choice = Convert.ToInt32(Console.ReadLine());
+                switch (Choice)
+                {
+                    case 1:
+                        DisplayAll();
+                        break;
+                    case 2:
+                        AddEmployee();
+                        break;
+                    case 3:
+                        UpdateEmployee();
+                        break;
+                    default:
+
+                        break;
+                }
+            }
+            //Console.ReadKey();
+
+        }
+        private static void AddEmployee()
+        {
+            // var ConnectionString = ConfigurationManager.ConnectionStrings["ConStr"].ConnectionString;
+            try
+            {
+                
+                using (var Context = new FIS0921ADOEntities())
+                {
+                    var Prod = new Product();
+                    Console.WriteLine("Enter ID");
+                    Prod.Id = Convert.ToInt32(Console.ReadLine());
+
+                    Console.WriteLine("Enter Name");
+                    Prod.Name = Console.ReadLine();
+
+                    Console.WriteLine("Enter Price");
+                    Prod.Price = Convert.ToInt32(Console.ReadLine());
+
+                    Console.WriteLine("Enter Description");
+                    Prod.Description = Console.ReadLine();
+
+                    Console.WriteLine("Enter IsActive");
+                    Prod.IstActive = Console.ReadLine();
+
+                    Context.Products.Add(Prod);
+
+                    int Rows = Context.SaveChanges();
+                    Console.WriteLine($"{Rows} affected");
+                    //int Rows = Command.ExecuteNonQuery();
+                    //Console.WriteLine($"{Rows} affected");
+                }
+            }
+            catch (SqlException ex)
+            {
+                Console.WriteLine("Exception Occured" + ex.Message);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Exception Occurred" + ex.Message);
+            }
+        }
+        private static void DisplayAll()
+        {
+            try
+            {
+                using (var Context = new FIS0921ADOEntities())
+                {
+                    var TotalEmployees = Context.Products;
+                    foreach (var Emp in TotalEmployees)
+                    {
+                        Console.WriteLine($"ID = {Emp.Id}\tName={Emp.Name}\tPrice={Emp.Price}\tDescritption={Emp.Description}\tIsActive={Emp.IstActive}\t");
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                Console.WriteLine("Exception Occured" + ex.Message);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Exception Occurred" + ex.Message);
+            }
+        }
+        private static void UpdateEmployee()
+        {
+            try
+            {
+                using (var Context = new FIS0921ADOEntities())
+                {
+                    var Prod = new Product();
+                    //Boolean Found=false;
+                    Console.WriteLine("Enter id to search");
+                    int ID = Convert.ToInt32(Console.ReadLine());
+                    var Obj = Context.Products.Find(ID);
+                    //var TotalEmployees = Context.Products;
+
+                    if (Obj == null)
+                    {
+                        Console.WriteLine("User not found");
+
+                    }
+                    else
+                    {
+                        Console.WriteLine("User found please enter new data");
+
+                        Console.WriteLine("Enter new Name");
+                        Obj.Name = Console.ReadLine();
+                        Console.WriteLine("Enter new Price");
+                        Obj.Price = Convert.ToInt32(Console.ReadLine());
+                        Console.WriteLine("Enter new Description");
+                        Obj.Description = Console.ReadLine();
+                        Console.WriteLine("Enter new IsActive");
+                        Obj.IstActive = Console.ReadLine();
+                        int Rows = Context.SaveChanges();
+                        Console.WriteLine($"{Rows} affected");
+                    }
+
+                }
+            }
+            catch (SqlException ex)
+            {
+                Console.WriteLine("Exception Occured" + ex.Message);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Exception Occurred" + ex.Message);
+            }
+        }
+    }
+}
